@@ -1,6 +1,12 @@
 package com.revature.eval.java.core;
 
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.temporal.Temporal;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -15,7 +21,7 @@ public class EvaluationService {
 	 */
 	public String reverse(String string) {
 		char[] reversed = new char[string.length()];
-		for (int i = reversed.length - 1, j=0; i >= 0; i--, j++) {
+		for (int i = reversed.length - 1, j = 0; i >= 0; i--, j++) {
 			reversed[j] = string.charAt(i);
 		}
 		return new String(reversed);
@@ -31,7 +37,12 @@ public class EvaluationService {
 	 */
 	public String acronym(String phrase) {
 		// TODO Write an implementation for this method declaration
-		return null;
+		String[] splitPhrase = phrase.split("[ -]");
+		char[] jargon = new char[splitPhrase.length];
+		for (int i = 0; i < splitPhrase.length; i++) {
+			jargon[i] = splitPhrase[i].toUpperCase().charAt(0);
+		}
+		return new String(jargon);
 	}
 
 	/**
@@ -85,17 +96,28 @@ public class EvaluationService {
 
 		public boolean isEquilateral() {
 			// TODO Write an implementation for this method declaration
-			return false;
+			if (sideOne == sideTwo && sideTwo == sideThree) {
+				return true;
+			} else
+				return false;
 		}
 
 		public boolean isIsosceles() {
 			// TODO Write an implementation for this method declaration
-			return false;
+			if (isEquilateral()) { // at least two sides are the same length
+				return true;
+			} else if ((sideOne == sideTwo) || (sideTwo == sideThree) || (sideOne == sideThree)) {
+				return true;
+			} else
+				return false;
 		}
 
 		public boolean isScalene() {
 			// TODO Write an implementation for this method declaration
-			return false;
+			if (!(isEquilateral() || isIsosceles())) {
+				return true;
+			} else
+				return false;
 		}
 
 	}
@@ -117,7 +139,40 @@ public class EvaluationService {
 	 */
 	public int getScrabbleScore(String string) {
 		// TODO Write an implementation for this method declaration
-		return 0;
+		int scrabbleScore = 0;
+		for (int i = 0; i < string.length(); i++) {
+			char ch = string.toUpperCase().charAt(i);
+			switch (ch) {
+			case 'A': case 'E': case 'I': case 'O': case 'U': case 'L': case 'N': case 'R': case 'S': case 'T':
+				scrabbleScore++;
+				break;
+				
+			case 'D': case 'G':
+				scrabbleScore += 2;
+				break;
+
+			case 'B': case 'C': case 'M': case 'P':
+				scrabbleScore += 3;
+				break;
+
+			case 'F': case 'H': case 'V': case 'W': case 'Y':
+				scrabbleScore += 4;
+				break;
+
+			case 'K':
+				scrabbleScore += 5;
+				break;
+
+			case 'J': case 'X':
+				scrabbleScore += 8;
+				break;
+
+			case 'Q': case 'Z':
+				scrabbleScore += 10;
+				break;
+			}
+		}
+		return scrabbleScore;
 	}
 
 	/**
@@ -153,7 +208,22 @@ public class EvaluationService {
 	 */
 	public String cleanPhoneNumber(String string) {
 		// TODO Write an implementation for this method declaration
-		return null;
+		String output = "";
+		for (int i = 0; i < string.length(); i++) {
+			char ch = string.charAt(i);
+			if (Character.isDigit(ch)) {
+				output += ch;
+			}
+		}
+		if (output.length() > 10) {
+			if (output.charAt(0) == '1') {
+				output = output.substring(1);
+			}
+		}
+		if (output.charAt(0) < '2' || output.charAt(3) < '2' || output.length() != 10) {
+			throw new IllegalArgumentException();
+		}
+		return output;
 	}
 
 	/**
@@ -167,7 +237,19 @@ public class EvaluationService {
 	 */
 	public Map<String, Integer> wordCount(String string) {
 		// TODO Write an implementation for this method declaration
-		return null;
+		Map<String, Integer> hash = new HashMap<String, Integer>();
+		String[] splitPhrase = string.split("[ ,]");
+		for (int i = 0; i < splitPhrase.length; i++) {
+			int occurrences = 0;
+			String word = splitPhrase[i];
+			for (int j = 0; j < splitPhrase.length; j++) {
+				if (word.equals(splitPhrase[j])) {
+					occurrences++;
+				}
+			}
+			hash.put(word, occurrences);
+		}
+		return hash;
 	}
 
 	/**
@@ -210,7 +292,21 @@ public class EvaluationService {
 
 		public int indexOf(T t) {
 			// TODO Write an implementation for this method declaration
-			return 0;
+			int start = 0, end = sortedList.size(), items = end / 2;
+			String key = t + "";
+			while (true) {
+				String root = sortedList.get(items) + "";
+				if (Integer.parseInt(key) < Integer.parseInt(root)) {
+					end = items;
+					items = ((items - start) / 2) + start;
+				}
+				else if (Integer.parseInt(key) > Integer.parseInt(root)) {
+					start = items;
+					items = ((end - start) / 2) + start;
+				}
+				else if (Integer.parseInt(key) == Integer.parseInt(root))
+					return items;
+			}
 		}
 
 		public BinarySearch(List<T> sortedList) {
@@ -247,7 +343,34 @@ public class EvaluationService {
 	 */
 	public String toPigLatin(String string) {
 		// TODO Write an implementation for this method declaration
-		return null;
+		String[] split = string.split(" ");
+		String vowels = "A E I O U"; //varies
+		String newString = "";
+		for (int j = 0; j < split.length; j++) {
+			String endSound = "";
+			if (vowels.contains(split[j].toUpperCase().charAt(0) + "")) {
+				endSound = "ay";
+			}
+			else {
+				int countMove = 0;
+				for (int i = 0; i < split[j].length(); i++) {
+					if (!(vowels.contains(split[j].toUpperCase().charAt(i) + ""))) {
+						endSound += split[j].charAt(i);
+						//System.out.println(split[j].charAt(i));
+						countMove++;
+					}
+					else
+						break;
+				}
+				endSound += "ay";
+				split[j] = split[j].substring(countMove);
+			}
+			if(j + 1 < split.length)
+				newString += split[j].concat(endSound) + " ";
+			else
+				newString += split[j].concat(endSound);
+		}
+		return newString;
 	}
 
 	/**
@@ -267,7 +390,16 @@ public class EvaluationService {
 	 */
 	public boolean isArmstrongNumber(int input) {
 		// TODO Write an implementation for this method declaration
-		return false;
+		String number = input + "";
+		int armstrong = 0, tempNumber = 0;
+		for (int i = 0; i < number.length(); i++) {
+			tempNumber = number.charAt(i) - '0';
+			armstrong += Math.pow(tempNumber, number.length());
+		}
+		if (armstrong == input)
+			return true;
+		else
+			return false;
 	}
 
 	/**
@@ -282,7 +414,15 @@ public class EvaluationService {
 	 */
 	public List<Long> calculatePrimeFactorsOf(long l) {
 		// TODO Write an implementation for this method declaration
-		return null;
+		List<Long> primeFactors = new LinkedList<>();
+		for (long i = 2; i < l + 1; i++) {
+			if (l % i == 0) {
+				primeFactors.add(i);
+				l /= i;
+				--i;
+			}
+		}
+		return primeFactors;
 	}
 
 	/**
@@ -321,7 +461,28 @@ public class EvaluationService {
 
 		public String rotate(String string) {
 			// TODO Write an implementation for this method declaration
-			return null;
+			String newString = "";
+			int sum = 0;
+			for (int i = 0; i < string.length(); i++) {
+				char ch = string.charAt(i);
+				sum = ch;
+				if (ch >= 'a' && ch <= 'z') {
+					sum = ch + key;
+					while (sum > 'z') {
+						sum -= 'z';
+						sum = sum + 'a' - 1;
+					}
+				}
+				else if (ch >= 'A' && ch <= 'Z') {
+					sum = ch + key;
+					while (sum > 'Z') {
+						sum -= 'Z';
+						sum = sum + 'A' - 1;
+					}
+				}
+				newString += (char) sum;
+			}
+			return newString;
 		}
 
 	}
@@ -340,7 +501,21 @@ public class EvaluationService {
 	 */
 	public int calculateNthPrime(int i) {
 		// TODO Write an implementation for this method declaration
-		return 0;
+		int number = 2, countPrime = 1;
+		while (countPrime != i) {
+			boolean found = false;
+			number++;
+			for (int j = 2; j < number; j++) {
+				if (number % j == 0) {
+					found = true;
+					break;
+				}
+			}
+			if (!found) {
+				countPrime++;
+			}
+		}
+		return number;
 	}
 
 	/**
@@ -377,7 +552,32 @@ public class EvaluationService {
 		 */
 		public static String encode(String string) {
 			// TODO Write an implementation for this method declaration
-			return null;
+			String abc = "abcdefghijklmnopqrstuvwxyz";
+			String chiper = "zyxwvutsrqponmlkjihgfedcba";
+			String newString = "";
+			int spacing = 0;
+			for (int i = 0; i < string.length(); i++) {
+				char ch = string.toLowerCase().charAt(i);
+				if (Character.isDigit(ch)) {
+					if(spacing != 0 && spacing % 5 == 0) {
+						newString += " ";
+					}
+					spacing++;
+					newString += ch;
+					continue;
+				}
+				for (int j = 0; j < abc.length(); j++) {
+					char ch2 = abc.charAt(j);
+					if(ch2 == ch) {
+						if(spacing != 0 && spacing % 5 == 0) {
+							newString += " ";
+						}
+						spacing++;
+						newString += chiper.charAt(j);
+					}
+				}
+			}
+			return newString;
 		}
 
 		/**
@@ -388,7 +588,24 @@ public class EvaluationService {
 		 */
 		public static String decode(String string) {
 			// TODO Write an implementation for this method declaration
-			return null;
+
+			String abc = "abcdefghijklmnopqrstuvwxyz";
+			String chiper = "zyxwvutsrqponmlkjihgfedcba";
+			String newString = "";
+			for (int i = 0; i < string.length(); i++) {
+				char ch = string.toLowerCase().charAt(i);
+				if (Character.isDigit(ch)) {
+					newString += ch;
+					continue;
+				}
+				for (int j = 0; j < abc.length(); j++) {
+					char ch2 = abc.charAt(j);
+					if(ch2 == ch) {
+						newString += chiper.charAt(j);
+					}
+				}
+			}
+			return newString;
 		}
 	}
 
@@ -416,7 +633,21 @@ public class EvaluationService {
 	 */
 	public boolean isValidIsbn(String string) {
 		// TODO Write an implementation for this method declaration
-		return false;
+		int valid = 0, index = 10;
+		for (int i = 0; i < string.length(); i++) {
+			char ch = string.charAt(i);
+			if (Character.isDigit(ch)) {
+				valid += (ch - '0') * index--;
+			}
+			else if (ch == 'X' && i == string.length() - 1) {
+				valid += 10 * index;
+			}
+		}
+		if (valid % 11 == 0) {
+			return true;
+		}
+		else
+			return false;
 	}
 
 	/**
@@ -434,7 +665,12 @@ public class EvaluationService {
 	 */
 	public boolean isPangram(String string) {
 		// TODO Write an implementation for this method declaration
-		return false;
+		for (char i = 'a'; i <= 'z'; i++) {
+			if (!(string.toLowerCase().contains(i + ""))) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/**
@@ -447,7 +683,32 @@ public class EvaluationService {
 	 */
 	public Temporal getGigasecondDate(Temporal given) {
 		// TODO Write an implementation for this method declaration
-		return null;
+		 //In case,time not included
+        if(given instanceof LocalDate) {
+            LocalDateTime time = LocalDateTime.of((LocalDate) given, LocalTime.MIN);
+            return time.plus(Duration.ofSeconds(1000000000l));
+        }
+        //if time is included
+        LocalDateTime time = LocalDateTime.from(given);
+        return time.plus(Duration.ofSeconds(1000000000l));
+        
+        	//Best personal try
+						/*LocalDateTime.from(given);
+						String givenToString = given.toString();
+						System.out.println(givenToString + " GIVEN");
+						SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+						Date date = null;
+						try {
+							date = sdf.parse(givenToString);
+							System.out.println(date.getTime() + " DATE");
+						} catch (ParseException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						Instant inst = Instant.ofEpochMilli(date.getTime());
+						inst = inst.plusSeconds((long) Math.pow(10, 9));
+						System.out.println("\nRESULT");
+						return inst;*/
 	}
 
 	/**
@@ -465,7 +726,16 @@ public class EvaluationService {
 	 */
 	public int getSumOfMultiples(int i, int[] set) {
 		// TODO Write an implementation for this method declaration
-		return 0;
+		int sum = 0;
+		for (int j = 1; j < i; j++) {
+			for (int k = 0; k < set.length; k++) {
+				if (j % set[k] == 0) {
+					sum += j;
+					break;
+				}
+			}
+		}
+		return sum;
 	}
 
 	/**
@@ -506,7 +776,42 @@ public class EvaluationService {
 	 */
 	public boolean isLuhnValid(String string) {
 		// TODO Write an implementation for this method declaration
-		return false;
+		String newString = "";
+		int sum = 0;
+		for (int i = 0; i < string.length(); i++) {
+			char ch = string.charAt(i);
+			if (Character.isDigit(ch)) {
+				newString += ch;
+			}
+			else if (ch != ' ') {
+				return false;
+			}
+		}
+		if (newString.length() > 16) {
+			string = newString.substring(1);
+		}
+		else
+			string = newString;
+		boolean toDouble = false;
+		for (int i = string.length() - 1; i >= 0; i--) {
+			if (toDouble) {
+				int result = (string.charAt(i) - '0') * 2;
+				if (result > 9) {
+					result -= 9;
+				}
+				sum += result;
+				toDouble = false;
+			}
+			else {
+				sum  += (string.charAt(i) - '0');
+				toDouble = true;
+			}
+		}
+		if (sum % 10 == 0) {
+			return true;
+		}
+		else
+			return false;
 	}
 
 	/**
@@ -538,7 +843,50 @@ public class EvaluationService {
 	 */
 	public int solveWordProblem(String string) {
 		// TODO Write an implementation for this method declaration
-		return 0;
+		String[] split = string.split("[ ?]");
+		int operendOne = 0, operendTwo = 0, answer = 0;
+		String operator = "";
+		for (int i = 0; i < split.length; i++) {
+			switch (split[i]) {
+			case "plus":
+				operator = "+";
+				break;
+			case "minus":
+				operator = "-";
+				break;
+			case "multiplied":
+				operator = "*";
+				break;
+			case "divided":
+				operator = "/";
+				break;
+			}
+			char ch = split[i].charAt(0);
+			if (Character.isDigit(ch) || ch == '-') {
+				if (operendOne == 0) {
+					operendOne = Integer.parseInt(split[i]);
+				}
+				else {
+					operendTwo = Integer.parseInt(split[i]);
+					break;
+				}
+			}
+		}
+		switch (operator) {
+		case "+":
+			answer = operendOne + operendTwo;
+			break;
+		case "-":
+			answer = operendOne - operendTwo;
+			break;
+		case "*":
+			answer = operendOne * operendTwo;
+			break;
+		case "/":
+			answer = operendOne / operendTwo;
+			break;
+		}
+		return answer;
 	}
 
 }

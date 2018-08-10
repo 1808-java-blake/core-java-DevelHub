@@ -22,7 +22,7 @@ import org.junit.rules.ExpectedException;
 public class EvaluationServiceTest {
 
 	private static final EvaluationService evaluationService = new EvaluationService();
-
+	
 	@Rule
 	public ExpectedException expectedException = ExpectedException.none();
 

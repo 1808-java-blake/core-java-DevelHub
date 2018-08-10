@@ -321,9 +321,9 @@ public class EvaluationServiceTest {
 	public void testYTreatedLikeAConsonantAtTheBeginningOfAWord() {
 		assertEquals("ellowyay", evaluationService.toPigLatin("yellow"));
 	}
-
+	//assertEquals("ickquay astfay unray", evaluationService.toPigLatin("quick fast run")) not part of genral rule provided
 	@Test
-	public void testAWholePhrase() {
+	public void testAWholePhrase() { 
 		assertEquals("uickqay astfay unray", evaluationService.toPigLatin("quick fast run"));
 	}
 

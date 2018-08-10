@@ -9,7 +9,12 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
+/**
+ * 
+ * @author Mubaraq Akanbi
+ * code heavily modified and provided by Revature.LLC
+ *
+ */
 public class EvaluationService {
 
 	/**

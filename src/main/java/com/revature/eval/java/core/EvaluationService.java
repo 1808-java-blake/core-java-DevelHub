@@ -243,10 +243,12 @@ public class EvaluationService {
 	public Map<String, Integer> wordCount(String string) {
 		// TODO Write an implementation for this method declaration
 		Map<String, Integer> hash = new HashMap<String, Integer>();
-		String[] splitPhrase = string.split("[ ,]");
+		String[] splitPhrase = string.split("[ ,\n]");
 		for (int i = 0; i < splitPhrase.length; i++) {
 			int occurrences = 0;
 			String word = splitPhrase[i];
+			if(word.equals(""))
+				continue;
 			for (int j = 0; j < splitPhrase.length; j++) {
 				if (word.equals(splitPhrase[j])) {
 					occurrences++;
@@ -507,6 +509,8 @@ public class EvaluationService {
 	public int calculateNthPrime(int i) {
 		// TODO Write an implementation for this method declaration
 		int number = 2, countPrime = 1;
+		if(i == 0)
+			throw new IllegalArgumentException();
 		while (countPrime != i) {
 			boolean found = false;
 			number++;
